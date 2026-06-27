@@ -1,13 +1,23 @@
 import sys
 import os
+import importlib.util
 import pandas as pd
 import streamlit as st
 from pathlib import Path
 import time
 from datetime import datetime
 
-# Import your native main automation function
-from redrob-ranker.rank import main as run_pipeline
+ROOT = Path(__file__).resolve().parent
+
+# Import your native main automation function from redrob-ranker/rank.py
+rank_path = ROOT / "redrob-ranker" / "rank.py"
+spec = importlib.util.spec_from_file_location("redrob_rank", str(rank_path))
+rank_module = importlib.util.module_from_spec(spec)
+if spec.loader is not None:
+    spec.loader.exec_module(rank_module)
+else:
+    raise ImportError(f"Could not load rank module from {rank_path}")
+run_pipeline = rank_module.main
 
 # ============================================================================
 # PAGE CONFIGURATION
