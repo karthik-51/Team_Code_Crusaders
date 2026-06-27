@@ -22,8 +22,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Redrob ranker pipeline")
     parser.add_argument(
         "--candidates",
-        default=str(ROOT / "data" / "precomputed" / "candidate_features_full.jsonl"),
-        help="Used for Stage 2 if rebuilding features",
+        default=str(ROOT / "dataset" / "candidates.jsonl"),
+        help="Path to candidates.jsonl (JSONL format)",
+    )
+    parser.add_argument(
+        "--jd",
+        default=str(ROOT / "dataset" / "job_description.docx"),
+        help="Path to job description file (.docx, .txt, or .md)",
     )
     parser.add_argument(
         "--out",
@@ -35,22 +40,34 @@ def main() -> None:
     parser.add_argument("--skip-stage3", action="store_true")
     args = parser.parse_args()
 
+    # Resolve candidate path relative to ROOT if it's relative
+    candidates_path = Path(args.candidates)
+    if not candidates_path.is_absolute():
+        candidates_path = ROOT / candidates_path
+    candidates_path = candidates_path.resolve()
+
+    # Resolve JD path relative to ROOT if it's relative
+    jd_path = Path(args.jd)
+    if not jd_path.is_absolute():
+        jd_path = ROOT / jd_path
+    jd_path = jd_path.resolve()
+
     if not args.skip_stage1:
-        run("run_stage1.py")
+        run("run_stage1.py", ["--jd", str(jd_path)])
     if not args.skip_stage2:
         run(
             "run_stage2.py",
             [
                 "--candidates",
-                str(ROOT.parent / "[PUB] India_runs_data_and_ai_challenge" / "India_runs_data_and_ai_challenge" / "candidates.jsonl"),
+                str(candidates_path),
                 "--out",
                 str(ROOT / "data" / "precomputed" / "candidate_features_full.jsonl"),
             ],
         )
     if not args.skip_stage3:
         run("run_stage3.py")
-    run("run_stage5.py", ["--out", args.out])
-    run("run_stage6.py", ["--out", args.out])
+    run("run_stage5.py", ["--candidates", str(candidates_path), "--out", args.out])
+    run("run_stage6.py", ["--candidates", str(candidates_path), "--out", args.out])
 
 
 if __name__ == "__main__":
