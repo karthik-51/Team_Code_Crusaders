@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 
 # Import your native main automation function
-from rank import main as run_pipeline
+from redrob-ranker.rank import main as run_pipeline
 
 # ============================================================================
 # PAGE CONFIGURATION
