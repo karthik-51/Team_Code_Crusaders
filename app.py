@@ -265,7 +265,7 @@ with col1:
     """, unsafe_allow_html=True)
     
     # File uploader
-    st.markdown('<p class="input-label">📄 Upload Candidates Data</p>', unsafe_allowed_html=True)
+    st.markdown('<p class="input-label">📄 Upload Candidates Data</p>', unsafe_allow_html=True)
     uploaded_file = st.file_uploader(
         "Select JSONL file",
         type=["jsonl"],
