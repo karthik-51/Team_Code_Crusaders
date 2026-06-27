@@ -273,10 +273,10 @@ with col1:
         help="📌 Drag & drop or browse your candidates.jsonl file"
     )
     
-    st.markdown("<br>", unsafe_allowed_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
     
     # Output filename
-    st.markdown('<p class="input-label">📊 Output File Name</p>', unsafe_allowed_html=True)
+    st.markdown('<p class="input-label">📊 Output File Name</p>', unsafe_allow_html=True)
     output_filename = st.text_input(
         "File name",
         value="top_100_candidates.csv",
@@ -286,9 +286,9 @@ with col1:
     
     st.markdown("""
     </div>
-    """, unsafe_allowed_html=True)
+    """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allowed_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ============================================================================
 # ACTION BUTTON
@@ -301,7 +301,7 @@ with col_button[1]:
         key="execute_btn"
     )
 
-st.markdown("<br>", unsafe_allowed_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ============================================================================
 # PIPELINE EXECUTION
@@ -350,7 +350,7 @@ if execute_pipeline:
             <div class="success-message">
             ✅ Pipeline completed successfully! Rankings generated for top 100 candidates.
             </div>
-            """, unsafe_allowed_html=True)
+            """, unsafe_allow_html=True)
             
             st.balloons()
             
@@ -360,7 +360,7 @@ if execute_pipeline:
             <div class="error-message">
             ❌ Error occurred: {str(error)}
             </div>
-            """, unsafe_allowed_html=True)
+            """, unsafe_allow_html=True)
     else:
         # Paths
         final_out_path = str(ROOT / "static" /output_filename)
@@ -418,7 +418,7 @@ if execute_pipeline:
             <div class="success-message">
             ✅ Pipeline completed successfully! Rankings generated for top 100 candidates.
             </div>
-            """, unsafe_allowed_html=True)
+            """, unsafe_allow_html=True)
             
             st.balloons()
             
@@ -428,10 +428,10 @@ if execute_pipeline:
             <div class="error-message">
             ❌ Error occurred: {str(error)}
             </div>
-            """, unsafe_allowed_html=True)
+            """, unsafe_allow_html=True)
 
 
-st.markdown("<br>", unsafe_allowed_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ============================================================================
 # RESULTS DISPLAY SECTION
@@ -456,7 +456,7 @@ if os.path.exists(final_out_path):
                 <div class="metric-label">Total Candidates</div>
                 <div class="metric-value" style="font-size: 1.8rem;">""" + str(len(df)) + """</div>
             </div>
-            """, unsafe_allowed_html=True)
+            """, unsafe_allow_html=True)
         
         with metric_col2:
             if len(df) > 0:
@@ -467,7 +467,7 @@ if os.path.exists(final_out_path):
                     <div class="metric-label">Average Score</div>
                     <div class="metric-value" style="font-size: 1.8rem;">{avg_score:.2f}</div>
                 </div>
-                """, unsafe_allowed_html=True)
+                """, unsafe_allow_html=True)
         
         with metric_col3:
             st.markdown(f"""
@@ -476,9 +476,9 @@ if os.path.exists(final_out_path):
                 <div class="metric-label">Top Ranked</div>
                 <div class="metric-value" style="font-size: 1.8rem;">#{df.iloc[0]['rank']}</div>
             </div>
-            """, unsafe_allowed_html=True)
+            """, unsafe_allow_html=True)
         
-        st.markdown("<br>", unsafe_allowed_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         
         # Data table
         st.markdown("#### 🎯 Top Ranked Candidates")
@@ -494,7 +494,7 @@ if os.path.exists(final_out_path):
             hide_index=True
         )
         
-        st.markdown("<br>", unsafe_allowed_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         
         # Download button
         with open(final_out_path, "rb") as file:
@@ -506,7 +506,7 @@ if os.path.exists(final_out_path):
                 use_container_width=True
             )
         
-        st.markdown("<br>", unsafe_allowed_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         
         # Additional info
         st.markdown("#### 📈 Dataset Information")
@@ -531,22 +531,22 @@ if os.path.exists(final_out_path):
         <div class="error-message">
         ⚠️ Could not display results: {str(e)}
         </div>
-        """, unsafe_allowed_html=True)
+        """, unsafe_allow_html=True)
 else:
     st.markdown("""
     <div class="info-box">
     👆 Run the pipeline above to generate and display results here
     </div>
-    """, unsafe_allowed_html=True)
+    """, unsafe_allow_html=True)
 
 # ============================================================================
 # FOOTER
 # ============================================================================
-st.markdown("<br><br>", unsafe_allowed_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
 ---
 <div style="text-align: center; color: #999; font-size: 0.9rem;">
     <p>🚀 Redrob AI Ranking Engine | Powered by Advanced ML Models</p>
     <p>© 2026 India Runs Team - Code Crusaders</p>
 </div>
-""", unsafe_allowed_html=True)
+""", unsafe_allow_html=True)
