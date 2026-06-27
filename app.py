@@ -437,7 +437,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # RESULTS DISPLAY SECTION
 # ============================================================================
 st.markdown("### 📊 Results & Rankings")
-
+final_out_path = str(ROOT / "static" /output_filename)
 if os.path.exists(final_out_path):
     try:
         df = pd.read_csv(final_out_path)
