@@ -362,6 +362,8 @@ if execute_pipeline:
             </div>
             """, unsafe_allow_html=True)
     else:
+        upload_dir = ROOT / "static"
+        upload_dir.mkdir(exist_ok=True)
         # Paths
         final_out_path = str(ROOT / "static" /output_filename)
         temp_jsonl_path = str(ROOT / "static"/ uploaded_file.name)
