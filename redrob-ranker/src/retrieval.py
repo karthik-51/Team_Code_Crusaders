@@ -19,7 +19,7 @@ COSINE_WEIGHT = 0.6
 BM25_WEIGHT = 0.4
 DEFAULT_TOP_K = 3000
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-EMBED_BATCH_SIZE = 256
+EMBED_BATCH_SIZE = 128
 
 
 def tokenize(text: str) -> list[str]:
