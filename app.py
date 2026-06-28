@@ -827,32 +827,29 @@ ROOT = Path(__file__).resolve().parent
 # ============================================================================
 st.markdown("### 📋 Input Configuration")
 
-col1, col2 = st.columns([1, 0.05])
+st.markdown('<div class="input-section">', unsafe_allow_html=True)
 
-with col1:
-    st.markdown('<div class="input-section">', unsafe_allow_html=True)
-    
-    # File uploader - Configured clearly for a single file
-    st.markdown('<p class="input-label">📄 Upload Candidates Data</p>', unsafe_allow_html=True)
-    uploaded_file = st.file_uploader(
-        "Select single JSONL file",
-        type=["jsonl"],
-        label_visibility="collapsed",
-        accept_multiple_files=False
-    )
-    
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Output filename
-    st.markdown('<p class="input-label">📊 Output File Name</p>', unsafe_allow_html=True)
-    output_filename = st.text_input(
-        "File name",
-        value="top_100_candidates.csv",
-        label_visibility="collapsed",
-        placeholder="e.g., ranked_candidates.csv"
-    )
-    
-    st.markdown("</div>", unsafe_allow_html=True)
+# File uploader - Single file only
+st.markdown('<p class="input-label">📄 Upload Candidates Data</p>', unsafe_allow_html=True)
+uploaded_file = st.file_uploader(
+    "Select JSONL file",
+    type=["jsonl"],
+    label_visibility="collapsed",
+    accept_multiple_files=False
+)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Output filename
+st.markdown('<p class="input-label">📊 Output File Name</p>', unsafe_allow_html=True)
+output_filename = st.text_input(
+    "File name",
+    value="top_100_candidates.csv",
+    label_visibility="collapsed",
+    placeholder="e.g., ranked_candidates.csv"
+)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 

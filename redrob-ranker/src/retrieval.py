@@ -56,6 +56,15 @@ def get_jd_text(jd_path: str | Path) -> str:
 def _load_encoder(model_name: str):
     from sentence_transformers import SentenceTransformer
 
+    root = Path(__file__).resolve().parents[1]
+    local_model_path = root / "Models" / "all-MiniLM-L6-v2"
+
+    if local_model_path.exists():
+        print(f"Loading model from local cache: {local_model_path}")
+        return SentenceTransformer(str(local_model_path))
+
+    print(f"Local model not found at {local_model_path}. Attempting to download {model_name}...")
+
     hf_token = (
         os.environ.get("HF_TOKEN")
         or os.environ.get("HUGGINGFACE_HUB_TOKEN")
@@ -116,9 +125,11 @@ def load_or_build_embeddings(
     if cache_path.exists() and not force_rebuild:
         embeddings = np.load(cache_path)
         if embeddings.shape[0] == len(texts):
+            print(f"Using cached embeddings for {len(texts)} candidates.")
             return embeddings
         print(f"Embedding cache size mismatch ({embeddings.shape[0]} vs {len(texts)}); rebuilding.")
 
+    print(f"Building embeddings for {len(texts)} candidates...")
     embeddings = encode_texts(texts, model_name=model_name)
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     np.save(cache_path, embeddings)
