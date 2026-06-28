@@ -56,7 +56,35 @@ def get_jd_text(jd_path: str | Path) -> str:
 def _load_encoder(model_name: str):
     from sentence_transformers import SentenceTransformer
 
-    return SentenceTransformer(model_name)
+    hf_token = (
+        os.environ.get("HF_TOKEN")
+        or os.environ.get("HUGGINGFACE_HUB_TOKEN")
+        or os.environ.get("HF_TOKEN_STREAMLIT")
+    )
+
+    try:
+        import streamlit as st
+
+        if not hf_token:
+            token_from_secrets = st.secrets.get("HF_TOKEN") or st.secrets.get("HUGGINGFACE_HUB_TOKEN")
+            if token_from_secrets:
+                hf_token = str(token_from_secrets).strip()
+    except Exception:
+        pass
+
+    hf_home = os.environ.get("HF_HOME")
+    cache_folder = hf_home or os.environ.get("TRANSFORMERS_CACHE") or os.path.join(
+        os.path.expanduser("~"), ".cache", "huggingface"
+    )
+    Path(cache_folder).mkdir(parents=True, exist_ok=True)
+
+    if hf_token:
+        try:
+            return SentenceTransformer(model_name, cache_folder=cache_folder, token=hf_token)
+        except TypeError:
+            return SentenceTransformer(model_name, cache_folder=cache_folder, use_auth_token=hf_token)
+
+    return SentenceTransformer(model_name, cache_folder=cache_folder)
 
 
 def encode_texts(

@@ -9,6 +9,21 @@ from datetime import datetime
 
 ROOT = Path(__file__).resolve().parent
 
+
+def _configure_hf_token() -> None:
+    try:
+        token = st.secrets.get("HF_TOKEN") or st.secrets.get("HUGGINGFACE_HUB_TOKEN")
+    except Exception:
+        token = None
+
+    if token:
+        token = str(token).strip()
+        os.environ["HF_TOKEN"] = token
+        os.environ["HUGGINGFACE_HUB_TOKEN"] = token
+
+
+_configure_hf_token()
+
 # Import your native main automation function from redrob-ranker/rank.py
 rank_path = ROOT / "redrob-ranker" / "rank.py"
 spec = importlib.util.spec_from_file_location("redrob_rank", str(rank_path))
