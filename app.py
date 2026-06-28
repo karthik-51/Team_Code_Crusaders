@@ -827,7 +827,6 @@ ROOT = Path(__file__).resolve().parent
 # ============================================================================
 st.markdown("### 📋 Input Configuration")
 
-st.markdown('<div class="input-section">', unsafe_allow_html=True)
 
 # File uploader - Single file only
 st.markdown('<p class="input-label">📄 Upload Candidates Data</p>', unsafe_allow_html=True)
