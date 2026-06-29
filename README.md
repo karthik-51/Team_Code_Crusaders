@@ -85,8 +85,6 @@ candidate_features_full.jsonl
 redrob-ranker/
 │
 ├── rank.py                     # Main pipeline entry point
-├── requirements.txt
-├── README.md
 ├── submission.csv
 │
 ├── scripts/
@@ -115,8 +113,11 @@ redrob-ranker/
 │       ├── honeypot_assessments.jsonl
 │       └── scored_top100.jsonl
 │
-└── app/
-    └── app.py                  # Streamlit Sandbox
+app.py           # Streamlit Sandbox
+|
+requirements.txt
+|
+Readme.md                 
 ```
 
 ---
@@ -271,9 +272,8 @@ Response rate 0.76.
 ## Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/redrob-ranker.git
+git clone https://github.com/karthik-51/Team_Code_Crusaders.git
 
-cd redrob-ranker
 ```
 
 ---
@@ -302,7 +302,9 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
-
+```bash
+cd redrob-ranker
+```
 ---
 
 # 📁 Dataset
@@ -310,7 +312,7 @@ pip install -r requirements.txt
 Project layout assumes:
 
 ```
-India_runs_data_and_ai_challenge/
+/redrob-ranker/dataset/
 
 ├── candidates.jsonl
 ├── sample_candidates.json
@@ -404,7 +406,7 @@ python scripts/run_stage6.py
 # ✅ Validate Submission
 
 ```bash
-python ../India_runs_data_and_ai_challenge/validate_submission.py submission.csv
+python dataset/validate_submission.py submission.csv
 ```
 
 A valid submission must:
@@ -421,7 +423,7 @@ A valid submission must:
 Launch locally:
 
 ```bash
-streamlit run app/app.py
+streamlit run ../app.py
 ```
 
 The web application allows users to:
@@ -430,7 +432,7 @@ The web application allows users to:
 * Upload Candidate Dataset
 * Run Ranking Pipeline
 * View Top Candidates
-* Download submission.csv
+* Download csv
 
 ---
 
