@@ -823,149 +823,71 @@ st.markdown("""
 ROOT = Path(__file__).resolve().parent
 
 # ============================================================================
-# MAIN CONTENT AREA
+# CUSTOM TAB STYLING (BIGGER & CLEARER)
 # ============================================================================
-st.markdown("### 📋 Input Configuration")
+st.markdown("""
+<style>
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2px;
+    }
 
+    .stTabs [data-baseweb="tab"] {
+        height: 60px;
+        padding: 0.5rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background-color: rgba(102, 126, 234, 0.1);
+        border: 2px solid #667eea;
+    }
 
-# File uploader - Single file only
-st.markdown('<p class="input-label">📄 Upload Candidates Data</p>', unsafe_allow_html=True)
-uploaded_file = st.file_uploader(
-    "Select JSONL file",
-    type=["jsonl"],
-    label_visibility="collapsed",
-    accept_multiple_files=False
-)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Output filename
-st.markdown('<p class="input-label">📊 Output File Name</p>', unsafe_allow_html=True)
-output_filename = st.text_input(
-    "File name",
-    value="top_100_candidates.csv",
-    label_visibility="collapsed",
-    placeholder="e.g., ranked_candidates.csv"
-)
-
-st.markdown("</div>", unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
+    .stTabs [aria-selected="true"] [data-baseweb="tab"] {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 2px solid #667eea;
+        color: white !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ============================================================================
-# ACTION BUTTON
+# TABS INTERFACE (LARGER)
 # ============================================================================
-col_button = st.columns([1, 1, 1])
-with col_button[1]:
-    execute_pipeline = st.button(
-        "🚀 Evaluate & Rank Candidates",
-        use_container_width=True,
-        key="execute_btn"
-    )
-
-st.markdown("<br>", unsafe_allow_html=True)
+tab1, tab2 = st.tabs(["⚡ VIEW PRE-RANKED RESULTS", "🔧 RANK YOUR OWN CANDIDATES"])
 
 # ============================================================================
-# PIPELINE EXECUTION
+# TAB 1: VIEW PRECOMPUTED RESULTS
 # ============================================================================
-if execute_pipeline:
-    if uploaded_file is None:
+with tab1:
+    submission_path = ROOT / "redrob-ranker" / "submission.csv"
+
+    if submission_path.exists():
+        with st.spinner("⏳ Loading precomputed results..."):
+            time.sleep(0.5)
+            df = pd.read_csv(submission_path)
+
         st.markdown("""
-        <div class="error-message">
-        ⚠️ Please upload a candidates JSONL file before evaluating.
+        <div class="info-box">
+        <b>📋 What You're Looking At:</b><br>
+        <b>Role:</b> Senior AI/ML Engineer with production experience<br>
+        <b>Dataset:</b> 100,000+ candidates from India Runs Challenge<br>
+        <b>Processing:</b> Multi-stage AI ranking (semantic + keyword + honeypot detection)<br>
+        <b>Speed:</b> ⚡ Instant (pre-computed results)<br>
         </div>
         """, unsafe_allow_html=True)
-    else:
-        upload_dir = ROOT / "static"
-        upload_dir.mkdir(exist_ok=True)
-        
-        final_out_path = str(ROOT / "static" / output_filename)
-        temp_jsonl_path = str(ROOT / "static" / uploaded_file.name)
-        
-        progress_placeholder = st.empty()
-        
-        with progress_placeholder.container():
-            progress_bar = st.progress(0)
-            status_text = st.empty()
-        
-        try:
-            status_text.markdown("⏳ Uploading candidates data...")
-            progress_bar.progress(20)
-            time.sleep(0.3)
-            
-            with open(temp_jsonl_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
-            
-            status_text.markdown("⏳ Preparing pipeline arguments...")
-            progress_bar.progress(40)
-            time.sleep(0.3)
-            
-            pipeline_args = [
-                "rank.py",
-                "--candidates", temp_jsonl_path,
-                "--out", final_out_path,
-                "--skip-stage1"
-            ]
-            
-            status_text.markdown("⏳ Initializing ranking engine...")
-            progress_bar.progress(60)
-            time.sleep(0.3)
-            
-            status_text.markdown("⏳ Running candidate evaluation & ranking (this may take a moment)...")
-            progress_bar.progress(80)
-            
-            sys.argv = pipeline_args
-            run_pipeline()
-            
-            status_text.markdown("⏳ Finalizing results...")
-            progress_bar.progress(100)
-            time.sleep(0.5)
-            
-            progress_placeholder.empty()
-            st.markdown("""
-            <div class="success-message">
-            ✅ Pipeline completed successfully! Rankings generated for top 100 candidates.
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.balloons()
-            
-        except Exception as error:
-            progress_placeholder.empty()
-            st.markdown(f"""
-            <div class="error-message">
-            ❌ Error occurred: {str(error)}
-            </div>
-            """, unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
 
-# ============================================================================
-# RESULTS DISPLAY SECTION
-# ============================================================================
-st.markdown("### 📊 Results & Rankings")
-final_out_path = str(ROOT / "static" / output_filename)
-if output_filename is None:
-    final_out_path = str(ROOT / "submission.csv")
-
-if os.path.exists(final_out_path):
-    try:
-        df = pd.read_csv(final_out_path)
-        
-        if len(df) > 100:
-            df = df.head(100)
-        
         metric_col1, metric_col2, metric_col3 = st.columns(3)
-        
+
         with metric_col1:
-            st.markdown("""
+            st.markdown(f"""
             <div class="metric-card">
                 <div class="metric-value">✨</div>
                 <div class="metric-label">Total Candidates</div>
-                <div class="metric-value" style="font-size: 1.8rem;">""" + str(len(df)) + """</div>
+                <div class="metric-value" style="font-size: 1.8rem;">{len(df)}</div>
             </div>
             """, unsafe_allow_html=True)
-        
+
         with metric_col2:
             if len(df) > 0:
                 avg_score = df['score'].mean()
@@ -973,77 +895,257 @@ if os.path.exists(final_out_path):
                 <div class="metric-card">
                     <div class="metric-value">📈</div>
                     <div class="metric-label">Average Score</div>
-                    <div class="metric-value" style="font-size: 1.8rem;">{avg_score:.2f}</div>
+                    <div class="metric-value" style="font-size: 1.8rem;">{avg_score:.4f}</div>
                 </div>
                 """, unsafe_allow_html=True)
-        
+
         with metric_col3:
             st.markdown(f"""
             <div class="metric-card">
                 <div class="metric-value">🏆</div>
-                <div class="metric-label">Top Ranked</div>
-                <div class="metric-value" style="font-size: 1.8rem;">#{df.iloc[0]['rank'] if 'rank' in df.columns else 1}</div>
+                <div class="metric-label">Top Scorer</div>
+                <div class="metric-value" style="font-size: 1.8rem;">{df['candidate_id'].iloc[0]}</div>
             </div>
             """, unsafe_allow_html=True)
-        
+
         st.markdown("<br>", unsafe_allow_html=True)
-        
         st.markdown("#### 🎯 Top Ranked Candidates")
-        
+
         cols_to_display = [col for col in ["candidate_id", "rank", "score", "reasoning"] if col in df.columns]
         display_df = df[cols_to_display].copy()
         if 'score' in display_df.columns:
             display_df['score'] = display_df['score'].apply(lambda x: f"{x:.4f}" if isinstance(x, (int, float)) else x)
-        
-        st.dataframe(
-            display_df.head(100),
-            use_container_width=True,
-            height=400,
-            hide_index=True
-        )
-        
+
+        st.dataframe(display_df.head(100), use_container_width=True, height=400, hide_index=True)
+
         st.markdown("<br>", unsafe_allow_html=True)
-        
-        with open(final_out_path, "rb") as file:
+
+        with open(submission_path, "rb") as file:
             st.download_button(
                 label="📥 Download CSV",
                 data=file,
-                file_name=output_filename,
+                file_name="submission.csv",
                 mime="text/csv",
                 use_container_width=True
             )
-        
+
         st.markdown("<br>", unsafe_allow_html=True)
-        
         st.markdown("#### 📈 Dataset Information")
         col_info1, col_info2 = st.columns(2)
-        
+
         with col_info1:
-            st.info(f"""
-            **Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-            
-            **File:** {output_filename}
-            """)
-        
+            st.info("**Generated:** Precomputed Results\n\n**Dataset:** 100,000 candidates")
+
         with col_info2:
-            st.info(f"""
-            **Records:** {len(df)} candidates
-            
-            **Status:** ✅ Ready for download
-            """)
-            
-    except Exception as e:
-        st.markdown(f"""
+            st.info(f"**Records:** {len(df)} candidates\n\n**Status:** ✅ Ready for download")
+    else:
+        st.markdown("""
         <div class="error-message">
-        ⚠️ Could not display results: {str(e)}
+        ❌ submission.csv not found in redrob-ranker/
         </div>
         """, unsafe_allow_html=True)
-else:
+
+# ============================================================================
+# TAB 2: CUSTOM RANKING
+# ============================================================================
+with tab2:
     st.markdown("""
     <div class="info-box">
-    👆 Run the pipeline above to generate and display results here
+    <b>📋 Use This When:</b><br>
+    • You have your own candidate list (JSONL format)<br>
+    • You want to rank against the <b>same job description</b> (Senior AI/ML Engineer)<br>
+    • You want to compare with precomputed rankings or validate the system<br>
     </div>
     """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("#### 📥 Upload & Configure")
+
+    st.markdown('<p class="input-label">📋 Upload Candidates Data (Required)</p>', unsafe_allow_html=True)
+    st.caption("Must be valid JSONL format with candidate profiles")
+    uploaded_file = st.file_uploader(
+        "Select JSONL file",
+        type=["jsonl"],
+        label_visibility="collapsed",
+        accept_multiple_files=False,
+        key="custom_candidates"
+    )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown('<p class="input-label">📊 Output File Name</p>', unsafe_allow_html=True)
+    st.caption("Choose a unique name (cannot be 'submission.csv' - that is reserved for precomputed results)")
+    output_filename = st.text_input(
+        "File name",
+        value="top_100_candidates.csv",
+        label_visibility="collapsed",
+        placeholder="e.g., top_100_candidates.csv",
+        key="custom_output"
+    )
+
+    output_filename_error = False
+    if output_filename:
+        if output_filename.lower() == "submission.csv" or output_filename.lower() == "submission":
+            st.markdown("""
+            <div class="error-message">
+            ❌ <b>Invalid filename:</b> 'submission.csv' is reserved for precomputed results. Please choose a different name.
+            </div>
+            """, unsafe_allow_html=True)
+            output_filename_error = True
+        elif not output_filename.endswith('.csv'):
+            output_filename = output_filename + '.csv'
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    col_button = st.columns([1, 1, 1])
+    with col_button[1]:
+        button_disabled = uploaded_file is None or not output_filename or output_filename_error
+        execute_pipeline = st.button(
+            "⏳ RUN RANKING PIPELINE",
+            use_container_width=True,
+            key="custom_execute_btn",
+            disabled=button_disabled
+        )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    if execute_pipeline:
+        if uploaded_file is None:
+            st.markdown("""
+            <div class="error-message">
+            ❌ Please upload a candidates JSONL file before evaluating.
+            </div>
+            """, unsafe_allow_html=True)
+        elif output_filename_error:
+            st.markdown("""
+            <div class="error-message">
+            ❌ Invalid filename. 'submission.csv' is reserved for precomputed results.
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            upload_dir = ROOT / "static"
+            upload_dir.mkdir(exist_ok=True)
+
+            final_out_path = str(upload_dir / output_filename)
+            temp_jsonl_path = str(upload_dir / uploaded_file.name)
+
+            progress_placeholder = st.empty()
+
+            with progress_placeholder.container():
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+
+            try:
+                status_text.markdown("⏳ Uploading candidates data...")
+                progress_bar.progress(20)
+                time.sleep(0.3)
+
+                with open(temp_jsonl_path, "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+
+                status_text.markdown("⏳ Preparing ranking pipeline...")
+                progress_bar.progress(40)
+                time.sleep(0.3)
+
+                pipeline_args = [
+                    "rank.py",
+                    "--candidates", temp_jsonl_path,
+                    "--out", final_out_path,
+                    "--skip-stage1"
+                ]
+
+                status_text.markdown("⏳ Initializing ranking engine...")
+                progress_bar.progress(60)
+                time.sleep(0.3)
+
+                status_text.markdown("⏳ Running candidate evaluation & ranking...")
+                progress_bar.progress(80)
+
+                sys.argv = pipeline_args
+                run_pipeline()
+
+                status_text.markdown("⏳ Finalizing results...")
+                progress_bar.progress(100)
+                time.sleep(0.5)
+
+                progress_placeholder.empty()
+                st.markdown("""
+                <div class="success-message">
+                ✅ Pipeline completed successfully! Rankings generated for top 100 candidates.
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.balloons()
+
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown("#### 📊 Results")
+
+                result_df = pd.read_csv(final_out_path)
+
+                if len(result_df) > 100:
+                    result_df = result_df.head(100)
+
+                metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+                with metric_col1:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div class="metric-value">✨</div>
+                        <div class="metric-label">Ranked Candidates</div>
+                        <div class="metric-value" style="font-size: 1.8rem;">{len(result_df)}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                with metric_col2:
+                    if len(result_df) > 0:
+                        avg_score = result_df['score'].mean()
+                        st.markdown(f"""
+                        <div class="metric-card">
+                            <div class="metric-value">📈</div>
+                            <div class="metric-label">Average Score</div>
+                            <div class="metric-value" style="font-size: 1.8rem;">{avg_score:.4f}</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                with metric_col3:
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div class="metric-value">🏆</div>
+                        <div class="metric-label">Top Score</div>
+                        <div class="metric-value" style="font-size: 1.8rem;">{result_df['score'].iloc[0]:.4f}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.markdown("<br>", unsafe_allow_html=True)
+
+                cols_to_display = [col for col in ["candidate_id", "rank", "score", "reasoning"] if col in result_df.columns]
+                display_result_df = result_df[cols_to_display].copy()
+                if 'score' in display_result_df.columns:
+                    display_result_df['score'] = display_result_df['score'].apply(lambda x: f"{x:.4f}" if isinstance(x, (int, float)) else x)
+
+                st.dataframe(display_result_df.head(100), use_container_width=True, height=400, hide_index=True)
+
+                st.markdown("<br>", unsafe_allow_html=True)
+
+                with open(final_out_path, "rb") as file:
+                    st.download_button(
+                        label="📥 Download CSV",
+                        data=file,
+                        file_name=output_filename,
+                        mime="text/csv",
+                        use_container_width=True,
+                        key="custom_download"
+                    )
+
+            except Exception as error:
+                progress_placeholder.empty()
+                st.markdown(f"""
+                <div class="error-message">
+                ❌ Error occurred: {str(error)}
+                </div>
+                """, unsafe_allow_html=True)
 
 # ============================================================================
 # FOOTER
