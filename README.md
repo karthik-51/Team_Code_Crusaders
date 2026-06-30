@@ -428,7 +428,6 @@ streamlit run ../app.py
 
 The web application allows users to:
 
-* Upload Job Description
 * Upload Candidate Dataset
 * Run Ranking Pipeline
 * View Top Candidates
