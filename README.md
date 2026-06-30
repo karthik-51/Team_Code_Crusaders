@@ -420,6 +420,12 @@ A valid submission must:
 
 # 🌐 Streamlit Demo
 
+Streamlit Live Link:
+
+```bash
+https://teamcodecrusaders-redrob.streamlit.app/
+```
+
 Launch locally:
 
 ```bash
